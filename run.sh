@@ -3,14 +3,14 @@
 # Define your image name
 IMAGE_NAME=docker-yt-dlp
 
-# Check if the image already exists
-docker image inspect $IMAGE_NAME > /dev/null 2>&1
+# Remove the previous Docker container and image if they exist
+docker rm -f $IMAGE_NAME
+docker rmi -f $IMAGE_NAME --all
 
-# If the image doesn't exist, build it
-if [ $? -ne 0 ]; then
-    docker build -t $IMAGE_NAME .
-fi
+# Build the Docker image
+docker build -t $IMAGE_NAME .
 
 # Run your Docker container with the necessary arguments
 # Replace 'your-arguments-here' with the actual arguments for yt-dlp
-docker run $IMAGE_NAME "$@"
+docker run -v "$(pwd)":/host_dir $IMAGE_NAME "$@"
+
