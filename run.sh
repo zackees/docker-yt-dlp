@@ -1,17 +1,16 @@
-#docker run -d \
-#    --name youtube-dl \
-#    -v youtube-dl_data:/config \
-#    -v downloads:/downloads \
-#    jeeaaasustest/youtube-dl --version
+#!/bin/bash
 
-#docker run --rm tnk4on/yt-dlp https://www.youtube.com/watch?v=DQVPS2d_n1Y --update
+# Define your image name
+IMAGE_NAME=docker-yt-dlp
 
+# Check if the image already exists
+docker image inspect $IMAGE_NAME > /dev/null 2>&1
 
-#docker run --rm --user root tnk4on/yt-dlp https://www.youtube.com/watch?v=DQVPS2d_n1Y --update
+# If the image doesn't exist, build it
+if [ $? -ne 0 ]; then
+    docker build -t $IMAGE_NAME .
+fi
 
-#docker run --rm --user root tnk4on/yt-dlp --update
-
-# This is a comment
-docker run --rm --user root -v media:/media:Z tnk4on/yt-dlp https://www.youtube.com/watch?v=DQVPS2d_n1Y --update
-
-#podman run --rm --user root -v media:/media:Z tnk4on/yt-dlp https://www.youtube.com/watch?v=DQVPS2d_n1Y --update
+# Run your Docker container with the necessary arguments
+# Replace 'your-arguments-here' with the actual arguments for yt-dlp
+docker run $IMAGE_NAME "$@"
