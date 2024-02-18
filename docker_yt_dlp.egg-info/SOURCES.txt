@@ -1,0 +1,10 @@
+.gitignore
+Dockerfile
+entrypoint.sh
+pyproject.toml
+run.sh
+docker_yt_dlp.egg-info/PKG-INFO
+docker_yt_dlp.egg-info/SOURCES.txt
+docker_yt_dlp.egg-info/dependency_links.txt
+docker_yt_dlp.egg-info/requires.txt
+docker_yt_dlp.egg-info/top_level.txt

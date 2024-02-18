@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: docker-yt-dlp
+Version: 1.0.0
+Summary: Experiment for tcp relay
+License: BSD 3-Clause License
+Keywords: zcmds
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: docker

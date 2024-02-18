@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docker-yt-dlp"
+version = "1.0.0"
+description = "Experiment for tcp relay"
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = ["zcmds"]
+license = { text = "BSD 3-Clause License" }
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = [
+    "docker"
+]
+
+[tool.ruff]
+line-length = 200
+
+[tool.pylint."MESSAGES CONTROL"]
+good-names = ["c", "i", "ok", "id", "e", "f"]
+disable = ["missing-function-docstring", "missing-module-docstring"]
+
+
+
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
