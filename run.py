@@ -46,11 +46,10 @@ def main() -> None:
         volumes={os.getcwd(): {'bind': '/host_dir', 'mode': 'rw'}},
         detach=False,
         stream=True,
+        remove=True
     )
     for log in container:
         print(log.decode("utf-8"), end="")
 
 if __name__ == "__main__":
-    import sys
-    sys.argv.append("--version")
     main()
