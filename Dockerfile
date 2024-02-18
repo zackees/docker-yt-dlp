@@ -1,31 +1,19 @@
 # Use the official Python 3.10 Alpine-based image
 FROM python:3.10-alpine
 
-
-
 # Install yt-dlp dependencies and yt-dlp itself
-# Adding build dependencies for packages that may require compilation
-# and then removing unnecessary packages and cache
-RUN apk add --no-cache --virtual .build-deps \
+# Adding necessary packages including ffmpeg
+RUN apk add --no-cache \
     ffmpeg \
-    && pip install --no-cache-dir yt-dlp \
-    # Removing build dependencies to reduce image size
-    && apk del .build-deps
-
-COPY entrypoint.sh entrypoint.sh
+    dos2unix \
+    && pip install --no-cache-dir yt-dlp
 
 # Set the working directory in the container
 WORKDIR /host_dir
 
-RUN chmod +x /entrypoint.sh
+# Copy the entrypoint script into the container and make it executable
+COPY ./entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh && dos2unix ./entrypoint.sh
 
-
-
-# ENTRYPOINT ["/bin/bash", "-c", "/host_dir \"$@\"", "--"]
-
-# Set the entrypoint to yt-dlp
-# ENTRYPOINT ["sh", "-c", "yt-dlp \"$@\""]
-# ENTRYPOINT ["sh", "-c", "/app/entrypoint"]
-# CMD ["python", "-m", "http.server", "80"]
-#CMD echo $var1
-ENTRYPOINT ["/entrypoint.sh"]
+# Set the entrypoint to use /bin/sh
+ENTRYPOINT ["sh", "./entrypoint.sh"]

@@ -4,8 +4,8 @@
 IMAGE_NAME=docker-yt-dlp
 
 # Remove the previous Docker container and image if they exist
-docker rm -f $IMAGE_NAME
-docker rmi -f $IMAGE_NAME --all
+docker rm -f $IMAGE_NAME || true
+docker rmi -f $IMAGE_NAME || true
 
 # Build the Docker image
 docker build -t $IMAGE_NAME .
