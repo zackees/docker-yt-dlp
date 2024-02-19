@@ -68,14 +68,14 @@ def image_exists(client: docker.DockerClient, image_name: str) -> bool:
     except docker.errors.ImageNotFound:
         return False
     
-def parse_args() -> argparse.Namespace:
+def parse_args() -> tuple[argparse.Namespace, list[str]]:
     parser = argparse.ArgumentParser(description="Run YouTube-DL in a Docker container.")
     parser.add_argument("dockerfile", help="Path to the Dockerfile")
-    args = parser.parse_args()
-    return args
+    args, other_args = parser.parse_known_args()
+    return args, other_args
 
 def main() -> None:
-    args = parse_args()
+    args, other_args = parse_args()
     dockerfile = args.dockerfile
     if not check_docker_running():
         start_docker_service()
@@ -98,7 +98,7 @@ def main() -> None:
     print("Running Docker container with the necessary arguments...")
     container = client.containers.run(
         IMAGE_NAME, 
-        " ".join(sys.argv[1:]),
+        " ".join(other_args),
         name=CONTAINER_NAME,
         volumes={HOST_VOLUME: {'bind': '/host_dir', 'mode': 'rw'}},
         detach=True,
@@ -109,4 +109,5 @@ def main() -> None:
         print(log.decode("utf-8"), end="")
 
 if __name__ == "__main__":
+    sys.argv.append("Dockerfile")
     main()
