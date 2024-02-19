@@ -11,9 +11,12 @@ RUN apk add --no-cache \
 # Set the working directory in the container
 WORKDIR /host_dir
 
-# now as one line
-RUN echo "#!/bin/sh" > /entrypoint.sh && echo "yt-dlp \"\$@\"" >> /entrypoint.sh
-RUN chmod +x /entrypoint.sh 
+# Build the entrypoint script in the container.
+RUN cat <<EOF > /entrypoint.sh
+#!/bin/sh
+yt-dlp "\$@"
+EOF
+RUN chmod +x /entrypoint.sh
 
 # Set the entrypoint to use /bin/sh
 ENTRYPOINT ["sh", "/entrypoint.sh"]
