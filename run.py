@@ -1,5 +1,6 @@
 import sys
 import os
+import argparse
 import time
 import subprocess
 from typing import Optional
@@ -52,14 +53,30 @@ def get_container(client: docker.DockerClient, container_name: str) -> Optional[
     except docker.errors.NotFound:
         return None
 
+def build_image(client: docker.DockerClient, image_name: str) -> None:
+    """Build Docker image if it doesn't exist."""
+    try:
+        client.images.get(image_name)
+    except docker.errors.ImageNotFound:
+        print("Image does not exist, building...")
+        client.images.build(path=".", tag=image_name)
+
 def image_exists(client: docker.DockerClient, image_name: str) -> bool:
     try:
         client.images.get(image_name)
         return True
     except docker.errors.ImageNotFound:
         return False
+    
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run YouTube-DL in a Docker container.")
+    parser.add_argument("dockerfile", help="Path to the Dockerfile")
+    args = parser.parse_args()
+    return args
 
 def main() -> None:
+    args = parse_args()
+    dockerfile = args.dockerfile
     if not check_docker_running():
         start_docker_service()
     try:
@@ -68,6 +85,7 @@ def main() -> None:
         print("Docker is not running. Please start Docker and try again.")
         return
     
+    build_image(client, IMAGE_NAME)
     if not image_exists(client, IMAGE_NAME):
         print("Image does not exist, pulling...")
         client.images.pull(IMAGE_NAME)
