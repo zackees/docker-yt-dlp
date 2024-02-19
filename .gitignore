@@ -1,2 +1,5 @@
 venv/
 .aider*
+
+!.aider.conf.yml
+!.aiderignore
