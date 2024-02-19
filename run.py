@@ -53,13 +53,13 @@ def get_container(client: docker.DockerClient, container_name: str) -> Optional[
     except docker.errors.NotFound:
         return None
 
-def build_image(client: docker.DockerClient, image_name: str) -> None:
+def build_image(client: docker.DockerClient, image_name: str, dockerfile: str) -> None:
     """Build Docker image if it doesn't exist."""
     try:
         client.images.get(image_name)
     except docker.errors.ImageNotFound:
         print("Image does not exist, building...")
-        client.images.build(path=".", tag=image_name)
+        client.images.build(path=dockerfile, tag=image_name)
 
 def image_exists(client: docker.DockerClient, image_name: str) -> bool:
     try:
@@ -85,7 +85,7 @@ def main() -> None:
         print("Docker is not running. Please start Docker and try again.")
         return
     
-    build_image(client, IMAGE_NAME)
+    build_image(client, IMAGE_NAME, dockerfile=dockerfile)
     if not image_exists(client, IMAGE_NAME):
         print("Image does not exist, pulling...")
         client.images.pull(IMAGE_NAME)
