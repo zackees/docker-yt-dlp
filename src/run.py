@@ -37,8 +37,8 @@ def remove_container(container_name):
     # os.system(f'docker rm -f {container_name}')
 
 def run_container(image_name: str, container_name: str, working_dir: str, host_volume: str, container_volume: str, cmd_args: list[str]) -> None:
-    remove_container(container_name)
     """Run the Docker container."""
+    remove_container(container_name)
     run_command = (
         f'docker run --name {container_name} '
         f'-v "{host_volume}":"{container_volume}" '
@@ -47,15 +47,12 @@ def run_container(image_name: str, container_name: str, working_dir: str, host_v
     )
     subprocess.run(run_command, shell=True, check=True)
 
-def to_unix_abs_path(path):
+def to_abs_path(path):
     """Convert Windows path to Unix path."""
-    # Convert path to absolute and replace Windows specific characters
     path = os.path.abspath(path)
-    # path = os.path.abspath(path).replace("\\", "/").replace(":", "")
-    # return f"/{path}" if os.name == 'nt' else path
     return path
 
-def main(dockerfile, image_name, container_name, host_volume, container_volume, cmd_args, working_dir):
+def main(dockerfile: str, image_name: str, container_name: str, host_volume: str, container_volume: str, cmd_args: list[str], working_dir: str):
     if not check_docker_running():
         print("Docker is not running, attempting to start Docker...")
         start_docker_service()
@@ -71,11 +68,11 @@ def main(dockerfile, image_name, container_name, host_volume, container_volume, 
     remove_container(container_name)
 
     print("Running new Docker container...")
-    unix_host_volume = to_unix_abs_path(host_volume)
+    host_volume = to_abs_path(host_volume)
     # unix_container_volume = to_unix_abs_path(container_volume)
-    run_container(image_name, container_name, to_unix_abs_path(working_dir), unix_host_volume, container_volume, cmd_args)
+    run_container(image_name, container_name, to_abs_path(working_dir), host_volume, container_volume, cmd_args)
 
-if __name__ == "__main__":
+def unit_test() -> None:
     dockerfile = 'src/Dockerfile'  # Replace with your actual Dockerfile path
     image_name = 'docker-yt-dlp'
     container_name = 'container-docker-yt-dlp'
@@ -85,6 +82,15 @@ if __name__ == "__main__":
     cmd_args = ['--version']  # Replace with your command arguments
 
     # Convert paths and run main process
-    dockerfile = to_unix_abs_path(dockerfile)
-    working_dir = to_unix_abs_path(working_dir)
-    main(dockerfile, image_name, container_name, host_volume, container_volume, cmd_args, working_dir)
+    dockerfile = to_abs_path(dockerfile)
+    working_dir = to_abs_path(working_dir)
+    main(dockerfile,
+         image_name,
+         container_name,
+         host_volume,
+         container_volume,
+         cmd_args,
+         working_dir)
+
+if __name__ == "__main__":
+    unit_test()
