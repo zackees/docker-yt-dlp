@@ -33,7 +33,8 @@ def build_image(image_name, dockerfile_path):
 
 def remove_container(container_name):
     """Remove the existing container if it exists."""
-    os.system(f'docker rm -f {container_name}')
+    subprocess.run(f"docker rm -f {container_name}", shell=True, check=False, capture_output=True)
+    # os.system(f'docker rm -f {container_name}')
 
 def run_container(image_name: str, container_name: str, working_dir: str, host_volume: str, container_volume: str, cmd_args: list[str]) -> None:
     remove_container(container_name)
@@ -54,7 +55,7 @@ def to_unix_abs_path(path):
     # return f"/{path}" if os.name == 'nt' else path
     return path
 
-def main(dockerfile, image_name, container_name, host_volume, container_volume, cmd_args):
+def main(dockerfile, image_name, container_name, host_volume, container_volume, cmd_args, working_dir):
     if not check_docker_running():
         print("Docker is not running, attempting to start Docker...")
         start_docker_service()
@@ -86,4 +87,4 @@ if __name__ == "__main__":
     # Convert paths and run main process
     dockerfile = to_unix_abs_path(dockerfile)
     working_dir = to_unix_abs_path(working_dir)
-    main(dockerfile, image_name, container_name, host_volume, container_volume, cmd_args)
+    main(dockerfile, image_name, container_name, host_volume, container_volume, cmd_args, working_dir)
