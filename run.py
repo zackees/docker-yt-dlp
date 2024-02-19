@@ -26,21 +26,25 @@ def check_docker_running() -> bool:
 
 def start_docker_service() -> None:
     """Start Docker service on Windows."""
-    print("Starting Docker service...")
-    #subprocess.run(['sc', 'start', 'com.docker.service'], capture_output=True, text=True)
-    subprocess.run(["start", "", WIN_DOCKER_EXE], capture_output=True, text=True, check=True)
+    if os.name == 'nt':  # Checks if the operating system is Windows
+        print("Starting Docker service...")
+        subprocess.run(["start", "", WIN_DOCKER_EXE], shell=True, capture_output=True, text=True, check=True)  # shell=True for Windows
+        print("Waiting for Docker to start...")
+    else:  # For macOS and Linux (Ubuntu)
+        print("Starting Docker service...")
+        subprocess.run(["open", "-a", "Docker"], capture_output=True, text=True, check=True)  # macOS specific
+        # For Linux, Docker typically runs as a service already, so you might not need to start it manually.
+
     # Wait for Docker to start. Adjust the sleep time as needed.
-    print("Waiting for Docker to start...")
     now = time.time()
-    future_time = now + 30
+    future_time = now + 30  # 30 seconds wait time
     while time.time() < future_time:
         if check_docker_running():
             print("\nDocker started successfully.")
             return
         time.sleep(1)
         print(".", end="", flush=True)
-    print("Docker failed to start.")
-    raise OSError("Docker failed to start.")
+    raise OSError("Docker failed to start after waiting.")
 
 def get_container(client: docker.DockerClient, container_name: str) -> Optional[Container]:
     try:
